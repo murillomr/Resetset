@@ -1,5 +1,6 @@
 # Arquivos de configuração local 
 config.py
+*-workspace
 
 # Bytecode do Python
 __pycache__/

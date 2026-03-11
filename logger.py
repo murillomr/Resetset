@@ -29,8 +29,8 @@ def log_event(chat_id, status, error_message=''):
         # Extensões CEF (detalhes do evento)
         extensions = f'outcome={status} destinationUserID={chat_id}'
         if error_message:
-            # Escapa caracteres especiais para não quebrar o formato
-            clean_message = error_message.replace('', '').replace('=', '\=')
+            # Escapa o caractere '=' na mensagem de erro para não quebrar o formato CEF
+            clean_message = error_message.replace('=', '\\=')
             extensions += f' msg={clean_message}'
 
         # Monta a mensagem final no padrão: "Timestamp Hostname CEF:..."
