@@ -1,0 +1,3 @@
+Este é um texto de exemplo do arquivo estático.
+Você pode colocar qualquer informação relevante aqui.
+Por exemplo, o status de um serviço ou um lembrete importante.
