@@ -1,10 +1,12 @@
 import os
 import subprocess
 import requests
+from logger import log_event 
 
 try:
     from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 except ImportError:
+    # Não há chat_id para logar aqui, então apenas imprimimos e saímos
     print("!!! ERRO !!!")
     print("O arquivo 'config.py' não foi encontrado.")
     exit()
@@ -44,7 +46,7 @@ def read_static_file(filepath):
         return f"Erro ao ler o arquivo '{filepath}': {e}"
 
 def send_telegram_message(message):
-    """Envia uma mensagem para o Telegram."""
+    """Envia uma mensagem para o Telegram e loga o resultado."""
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
@@ -53,10 +55,12 @@ def send_telegram_message(message):
     }
     try:
         response = requests.post(url, json=payload)
-        response.raise_for_status()
-        print("Mensagem enviada com sucesso!")
+        response.raise_for_status()  # Gera uma exceção para respostas de erro (4xx ou 5xx)
+        log_event(TELEGRAM_CHAT_ID, 'SUCCESS')
+        print("Mensagem enviada com sucesso e log gerado.")
     except requests.exceptions.RequestException as e:
-        print(f"Erro ao enviar a mensagem para o Telegram: {e}")
+        log_event(TELEGRAM_CHAT_ID, 'FAILURE', error_message=str(e))
+        print(f"Erro ao enviar a mensagem. O erro foi logado.")
 
 if __name__ == "__main__":
     # Verifica se as credenciais do Telegram foram alteradas

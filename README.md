@@ -9,6 +9,7 @@ Este projeto consiste em um script Python que coleta informações básicas de u
 - Obtém o **Endereço IP** local.
 - Lê o conteúdo de um arquivo de texto estático (`info.txt`) e o anexa à mensagem.
 - Envia todas essas informações formatadas para um chat do Telegram através de um bot.
+- **Gera um log local (`events.log`) em formato CEF para cada tentativa de envio, registrando sucesso ou falha.**
 
 ## Pré-requisitos
 
@@ -33,7 +34,7 @@ Este projeto consiste em um script Python que coleta informações básicas de u
    ```
 
 3. **Configure as credenciais:**
-   - Abra o arquivo `config.py` e insira o seu `TELEGRAM_BOT_TOKEN` e o `TELEGRAM_CHAT_ID`.
+   - Crie o arquivo `config.py` (a partir do `config.py.example` se disponível) e insira o seu `TELEGRAM_BOT_TOKEN` e o `TELEGRAM_CHAT_ID`.
 
 4. **Personalize a mensagem estática:**
    - Edite o arquivo `info.txt` com a mensagem adicional que você deseja enviar.
@@ -46,14 +47,28 @@ Para executar o script, basta rodar o seguinte comando no terminal:
 python main.py
 ```
 
-O script será executado, coletará as informações e as enviará para o chat configurado no Telegram.
+O script será executado, coletará as informações, as enviará para o chat configurado no Telegram e registrará a operação em `events.log`.
+
+## Logs
+
+A cada execução, o script gera uma linha de log no arquivo `events.log`. O formato utilizado é o **Common Event Format (CEF)**, que é um padrão aberto para interoperabilidade de logs.
+
+- **Exemplo de log (sucesso):**
+  ```
+  Mar 10 2026 12:30:00 meu-host CEF:0|Custom|TelegramBot|1.0|TELEGRAM_SEND|Telegram message send attempt|0|outcome=SUCCESS destinationUserID=123456789
+  ```
+- **Exemplo de log (falha):**
+  ```
+  Mar 10 2026 12:31:00 meu-host CEF:0|Custom|TelegramBot|1.0|TELEGRAM_SEND|Telegram message send attempt|5|outcome=FAILURE destinationUserID=123456789 msg=HTTPError: 400 Client Error: Bad Request for url: ...
+  ```
 
 ## Estrutura do Projeto
 ```
 .
-├── .gitignore         # Ignora arquivos como config.py
-├── config.py  # Arquivo de exemplo para configuração
+├── .gitignore         # Ignora arquivos como config.py e *.log
+├── config.py          # Arquivo para configuração das credenciais
 ├── info.txt           # Arquivo com texto estático
+├── logger.py          # Módulo responsável por gerar os logs em CEF
 ├── main.py            # Script principal
 ├── README.md          # Este arquivo
 └── requirements.txt   # Dependências do projeto

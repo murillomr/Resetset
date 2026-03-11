@@ -12,6 +12,9 @@ venv/
 env/
 .env
 
+# Arquivos de log
+*.log
+
 # Arquivos de sistema operacional
 .DS_Store
 Thumbs.db
