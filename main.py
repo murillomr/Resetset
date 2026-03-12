@@ -1,6 +1,7 @@
 import os
 import subprocess
 import requests
+import socket
 from logger import log_event 
 
 try:
@@ -28,10 +29,20 @@ def get_machine_info():
         uptime = f"Erro ao obter o uptime: {e}"
 
     try:
-        # Pega o primeiro endereço IP da lista
-        ip_address = subprocess.check_output("hostname -I", shell=True).decode("utf-8").strip().split()[0]
-    except Exception as e:
-        ip_address = f"Erro ao obter o endereço IP: {e}"
+        # Tenta obter o IP via socket, que é mais confiável para IPv4
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # Conecta a um IP externo para descobrir o IP de saída local
+        s.connect(("8.8.8.8", 80))
+        ip_address = s.getsockname()[0]
+        s.close()
+    except Exception:
+        # Fallback: se o método do socket falhar, usa o comando 'hostname -I'
+        try:
+            all_ips = subprocess.check_output("hostname -I", shell=True).decode("utf-8").strip().split()
+            # Procura pelo primeiro IP que seja IPv4 e não seja loopback
+            ip_address = next(ip for ip in all_ips if '.' in ip and not ip.startswith('127.'))
+        except (StopIteration, Exception) as e:
+            ip_address = f"Não foi possível obter o endereço IP: {e}"
 
     return hostname, uptime, ip_address
 
