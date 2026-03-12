@@ -2,6 +2,7 @@ import os
 import subprocess
 import requests
 import socket
+import time
 from logger import log_event 
 
 try:
@@ -74,6 +75,9 @@ def send_telegram_message(message):
         print(f"Erro ao enviar a mensagem. O erro foi logado.")
 
 if __name__ == "__main__":
+    # Aguarda 30 segundos. Útil para dar tempo à inicialização da rede.
+    time.sleep(30)
+
     # Verifica se as credenciais do Telegram foram alteradas
     if "SEU_TELEGRAM_BOT_TOKEN" in TELEGRAM_BOT_TOKEN or "SEU_TELEGRAM_CHAT_ID" in TELEGRAM_CHAT_ID:
         print("!!! AVISO !!!")
