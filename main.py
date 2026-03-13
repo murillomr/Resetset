@@ -13,7 +13,6 @@ except ImportError:
     print("O arquivo 'config.py' não foi encontrado.")
     exit()
 
-
 # --- Arquivo estático ---
 STATIC_FILE_PATH = "info.txt"
 
